@@ -1,3 +1,4 @@
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -190,7 +191,6 @@ public class Main
                 String newData = String.format("%s-%s-%s-%.2f", p.GetUserID(), p.GetUserName(), p.GetUserAddress(),p.GetUserBalance());
                 bw.write(newData);
                 bw.newLine();
-
             }
         }
         catch(IOException e)
@@ -207,12 +207,12 @@ public class Main
 
         System.out.println("Enter the User ID: ");
         String userID = scanner.nextLine();
-        //This is the closest to LINQ I see in java, so doing a query to removes uId where uID equals the userID that the user entered
+        //This is the closest to LINQ I see in java, so doing a query to remove uId where uID equals the userID that the user entered
         if(lmsDatabase.removeIf(uId -> uId.GetUserID().equals(userID)))
         {
             //If we find a user, we send the lmsDatabase to the DeleteandWriteFile method to delete the file and rewrite it
             DeleteAndWriteFile(lmsDatabase,fileLocale);
-            System.out.println("Succesfully removed the user!");
+            System.out.println("Successfully removed the user!");
         }
         else
             System.out.println("User not found!");
@@ -227,15 +227,17 @@ public class Main
             System.out.println(p.GetUserID() + " " + p.GetUserName() + " " + p.GetUserAddress() + " " + p.GetUserBalance());
     }
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) throws URISyntaxException {
             ArrayList<Person> LMSDatabase = new ArrayList<>();
-            String filelocale = "out/artifacts/SDLCAssignmentPart2_jar/users.txt";
-           boolean readFile =  Startup(LMSDatabase, filelocale);
+            String fileLocale = "out/artifacts/SDLCAssignmentPart2_jar/users.txt";
+
+
+
+        boolean readFile =  Startup(LMSDatabase, fileLocale);
 
            if(readFile)
            {
-               InitiateHamburgerMenuOptions(LMSDatabase,filelocale);
+               InitiateHamburgerMenuOptions(LMSDatabase, fileLocale);
            }
            else
            {
