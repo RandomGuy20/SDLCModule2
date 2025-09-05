@@ -220,7 +220,7 @@ public class Main
     public static void main(String[] args)
     {
             ArrayList<Person> LMSDatabase = new ArrayList<>();
-            String filelocale = "users.txt";
+            String filelocale = "out/artifacts/SDLCAssignmentPart2_jar/users.txt";
            boolean readFile =  Startup(LMSDatabase, filelocale);
 
            if(readFile)
