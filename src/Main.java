@@ -1,3 +1,6 @@
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import java.io.*;
@@ -96,12 +99,10 @@ public class Main
             switch(choice)
             {
                 case 1:
-                    AddNewUser(fileLocale);
-                    readFile = Startup(LMSDatabase, fileLocale);
+                    AddNewUser(lmsDatabase,fileLocale);
                     break;
                 case 2:
-                    RemoveUser(lmsDatabase);
-                    readFile = Startup(LMSDatabase, fileLocale);
+                    RemoveUser(lmsDatabase,fileLocale);
                     break;
                 case 3:
                     PrintOutAllUsers(lmsDatabase);
@@ -117,11 +118,12 @@ public class Main
         scanner.close();
     }
 
-    public static void AddNewUser(String fileLocale)
+    public static void AddNewUser(ArrayList<Person> lmsDatabase,String fileLocale)
     {
         Scanner scanner = new Scanner(System.in);
         boolean addedUser = false;
         String[] newUserData = new String[4];
+
 
 
         do
@@ -152,20 +154,29 @@ public class Main
             }
             while(!theyAddedARealnumber);
 
-            WriteUserToLMS(newUserData, fileLocale);
+            Person newUser = new Person(newUserData[0],newUserData[1],newUserData[2], Double.parseDouble(newUserData[3]));
+
+            if(lmsDatabase.add(newUser))
+                DeleteAndWriteFile(lmsDatabase, fileLocale);
+
+
+
             System.out.println("You successfully added the new user!");
             addedUser = true;
         }
         while(!addedUser);
     }
 
-    public static void WriteUserToLMS(String[] newUserData, String fileLocale)
+    public static void DeleteAndWriteFile(ArrayList<Person> lmsDatabase,String fileLocale)
     {
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileLocale, true)))
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileLocale)))
         {
-            String newData = String.format("%s-%s-%s-%.2f", newUserData[0], newUserData[1], newUserData[2],Double.parseDouble(newUserData[3]));
-            bw.newLine();
-            bw.write(newData);
+            for(Person p : lmsDatabase)
+            {
+                String newData = String.format("%s-%s-%s-%.2f", p.GetUserID(), p.GetUserName(), p.GetUserAddress(),p.GetUserBalance());
+                bw.write(newData);
+                bw.newLine();
+            }
         }
         catch(IOException e)
         {
@@ -173,8 +184,27 @@ public class Main
         }
     }
 
-    public static void RemoveUser(ArrayList<Person> lmsDatabase)
+
+    public static void RemoveUser(ArrayList<Person> lmsDatabase,String fileLocale )
     {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter the User ID: ");
+        String userID = scanner.nextLine();
+        if(lmsDatabase.removeIf(uId -> uId.GetUserID().equals(userID)))
+        {
+            System.out.println("Succesfully removed the user!");
+            File file = new File(fileLocale);
+
+            if(file.delete())
+            {
+                DeleteAndWriteFile(lmsDatabase,fileLocale);
+            }
+
+
+        }
+        else
+            System.out.println("User not found!");
 
     }
 
