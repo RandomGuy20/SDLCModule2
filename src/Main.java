@@ -11,6 +11,7 @@ import java.util.Scanner;
 public class Main
 {
 
+    //Making Sure the String is an Int - This is a helper method
     public static boolean ParseInt(String string)
     {
         try
@@ -25,6 +26,7 @@ public class Main
         }
     }
 
+    //Making Sure the String is a Double - This is a helper method
     public static boolean ParseDouble(String string)
     {
         try
@@ -71,6 +73,7 @@ public class Main
         }
     }
 
+    //This Method will be running the Hamburger Menu
     public static void InitiateHamburgerMenuOptions(ArrayList<Person> LMSDatabase, String fileLocale)
     {
         Scanner scanner = new Scanner(System.in);
@@ -78,6 +81,7 @@ public class Main
         String option;
         ArrayList<Person> lmsDatabase = LMSDatabase;
         boolean readFile;
+        //Do Loops loop at least 1 time, so I am using a Do While to constantly run the hamburger menu until 4 is pressed
         do
         {
             System.out.print("\nHamburger Menu Options type in the number for what you want to do then select enter");
@@ -90,6 +94,7 @@ public class Main
 
             option = scanner.nextLine();
 
+            //Make sure choice is a number otherwise restart
             choice = ParseInt(option) ? Integer.parseInt(option) : 0;
 
             if(choice <= 0)
@@ -118,6 +123,7 @@ public class Main
         scanner.close();
     }
 
+    //Add a new user
     public static void AddNewUser(ArrayList<Person> lmsDatabase,String fileLocale)
     {
         Scanner scanner = new Scanner(System.in);
@@ -141,6 +147,8 @@ public class Main
             {
                 System.out.print("Enter New User Balance in xx.xx format: ");
                 String checkForDouble = scanner.nextLine();
+                //As long as all 4 data piece are correct ---- The other 3 are just strings of whatever somebody wants
+                // We will add the doubleAmount and then set theyAddedARealnumber to true to leave the loop
                 if(ParseDouble(checkForDouble))
                 {
                     newUserData[3] = checkForDouble;
@@ -154,8 +162,10 @@ public class Main
             }
             while(!theyAddedARealnumber);
 
+            // Creating a new instance of Person object to add to lmsDatabase
             Person newUser = new Person(newUserData[0],newUserData[1],newUserData[2], Double.parseDouble(newUserData[3]));
 
+            // If lmsDatabase add a new user ( it will) we are going to wipe the file and recreate from short term memory
             if(lmsDatabase.add(newUser))
                 DeleteAndWriteFile(lmsDatabase, fileLocale);
 
@@ -167,8 +177,12 @@ public class Main
         while(!addedUser);
     }
 
+    //Deletes existing file and writes a new one
     public static void DeleteAndWriteFile(ArrayList<Person> lmsDatabase,String fileLocale)
     {
+
+        //Using a new instance of Buffered Writer to add every Person in lmsDatabsse to the new file, and then disposing of resources
+        //We are not appending to a file it is being remade
         try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileLocale)))
         {
             for(Person p : lmsDatabase)
@@ -176,6 +190,7 @@ public class Main
                 String newData = String.format("%s-%s-%s-%.2f", p.GetUserID(), p.GetUserName(), p.GetUserAddress(),p.GetUserBalance());
                 bw.write(newData);
                 bw.newLine();
+
             }
         }
         catch(IOException e)
@@ -185,23 +200,19 @@ public class Main
     }
 
 
+    //Removes a user
     public static void RemoveUser(ArrayList<Person> lmsDatabase,String fileLocale )
     {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Enter the User ID: ");
         String userID = scanner.nextLine();
+        //This is the closest to LINQ I see in java, so doing a query to removes uId where uID equals the userID that the user entered
         if(lmsDatabase.removeIf(uId -> uId.GetUserID().equals(userID)))
         {
+            //If we find a user, we send the lmsDatabase to the DeleteandWriteFile method to delete the file and rewrite it
+            DeleteAndWriteFile(lmsDatabase,fileLocale);
             System.out.println("Succesfully removed the user!");
-            File file = new File(fileLocale);
-
-            if(file.delete())
-            {
-                DeleteAndWriteFile(lmsDatabase,fileLocale);
-            }
-
-
         }
         else
             System.out.println("User not found!");
@@ -210,11 +221,10 @@ public class Main
 
     public static void PrintOutAllUsers(ArrayList<Person> lmsDatabase)
     {
-        for (int i = 0; i < lmsDatabase.size(); i++)
-        {
-            System.out.println(lmsDatabase.get(i).toString());
 
-        }
+        //Iterate each Person in lmsDatabase and print to console.
+        for(Person p : lmsDatabase)
+            System.out.println(p.GetUserID() + " " + p.GetUserName() + " " + p.GetUserAddress() + " " + p.GetUserBalance());
     }
 
     public static void main(String[] args)
