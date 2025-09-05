@@ -227,14 +227,20 @@ public class Main
             System.out.println(p.GetUserID() + " " + p.GetUserName() + " " + p.GetUserAddress() + " " + p.GetUserBalance());
     }
 
-    public static void main(String[] args) throws URISyntaxException {
+    public static void main(String[] args) throws URISyntaxException
+    {
+
             ArrayList<Person> LMSDatabase = new ArrayList<>();
+            //Absolute path to have jar be able to access and to have Main be able to access the file.
+            // I spent more time trying to see how to get a jar and Main to access the same file, than I spent making this project, and this was the best I could find
+            //Is their a better way to do this? I have never worked with jar files before.
             String fileLocale = "out/artifacts/SDLCAssignmentPart2_jar/users.txt";
 
 
-
+        //make sure we can read the file
         boolean readFile =  Startup(LMSDatabase, fileLocale);
 
+        //If we read the file, we initiate the Hamburger Menu
            if(readFile)
            {
                InitiateHamburgerMenuOptions(LMSDatabase, fileLocale);
